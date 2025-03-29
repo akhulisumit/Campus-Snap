@@ -34,7 +34,7 @@ export default function Home() {
     id: event.id,
     title: event.title,
     description: event.description,
-    imageUrl: event.thumbnailUrl
+    imageUrl: event.photos?.[0]?.url || 'https://via.placeholder.com/1200x600?text=No+Image'
   }));
 
   // Handle event click to open lightbox

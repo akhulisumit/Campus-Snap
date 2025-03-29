@@ -11,13 +11,13 @@ interface FeaturedCarouselProps {
 export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">("right");
   const autoPlayIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const { theme } = useTheme();
 
   // Set dynamic theme-based colors
   const bgColor = theme === 'light' ? 'bg-white' : 'bg-gray-900';
   const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
-  const cardBgColor = theme === 'light' ? 'bg-white' : 'bg-gray-800';
   
   // Change to custom blue color
   const accentColor = 'bg-[#0245b9]';
@@ -47,6 +47,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
 
   const startAutoPlay = () => {
     autoPlayIntervalRef.current = setInterval(() => {
+      setSlideDirection("right");
       setActiveIndex((prev) => getCircularIndex(prev + 1));
     }, 4000);
   };
@@ -59,16 +60,19 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   };
 
   const goToPrev = () => {
+    setSlideDirection("left");
     setActiveIndex(prevIndex);
     restartAutoPlay();
   };
 
   const goToNext = () => {
+    setSlideDirection("right");
     setActiveIndex(nextIndex);
     restartAutoPlay();
   };
 
   const goToSlide = (index: number) => {
+    setSlideDirection(index > activeIndex ? "right" : "left");
     setActiveIndex(index);
     restartAutoPlay();
   };
@@ -77,6 +81,46 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
     if (isAutoPlaying) {
       stopAutoPlay();
       startAutoPlay();
+    }
+  };
+
+  const slideVariants = {
+    enterFromLeft: {
+      x: -1000,
+      opacity: 0,
+      scale: 0.8,
+    },
+    enterFromRight: {
+      x: 1000,
+      opacity: 0,
+      scale: 0.8,
+    },
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+        duration: 0.6,
+      }
+    },
+    exitToLeft: {
+      x: -1000,
+      opacity: 0,
+      scale: 0.8,
+      transition: {
+        duration: 0.6,
+      }
+    },
+    exitToRight: {
+      x: 1000,
+      opacity: 0,
+      scale: 0.8,
+      transition: {
+        duration: 0.6,
+      }
     }
   };
 
@@ -100,36 +144,28 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
           {/* Main Carousel with 3 visible slides */}
           <div className="overflow-hidden py-12">
             <div className="flex items-center justify-center relative h-[400px] md:h-[500px]">
-              {/* Previous Slides (Left) */}
-              <div className="absolute left-0 md:left-4 z-10 w-[20%] md:w-[18%] h-[75%] opacity-40 transform -translate-x-6 scale-85">
-                <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
-                  <img 
-                    src={events[getCircularIndex(activeIndex - 2)].photos[0].url} 
-                    alt={events[getCircularIndex(activeIndex - 2)].title}
-                    className="w-full h-full object-cover brightness-75"
-                  />
-                </div>
-              </div>
-              
-              <div className="absolute left-[15%] md:left-[18%] z-10 w-[25%] md:w-[22%] h-[80%] opacity-60 transform -translate-x-2 scale-90">
-                <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
-                  <img 
+              {/* Previous Slide (Left) */}
+              <div className="absolute left-0 md:left-[5%] z-10 w-[28%] md:w-[25%] h-[85%] opacity-70">
+                <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg cursor-pointer`} onClick={goToPrev}>
+                  <motion.img 
                     src={events[prevIndex].photos[0].url} 
                     alt={events[prevIndex].title}
                     className="w-full h-full object-cover brightness-75"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.3 }}
                   />
                 </div>
               </div>
               
               {/* Current Slide (Center) */}
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="wait" initial={false}>
                 <motion.div 
                   key={activeIndex}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.5 }}
-                  className="relative z-20 w-[40%] md:w-[60%] h-full"
+                  variants={slideVariants}
+                  initial={slideDirection === "right" ? "enterFromRight" : "enterFromLeft"}
+                  animate="center"
+                  exit={slideDirection === "right" ? "exitToLeft" : "exitToRight"}
+                  className="relative z-20 w-[44%] md:w-[50%] h-full mx-auto"
                 >
                   <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-2xl`}>
                     <motion.img 
@@ -169,23 +205,15 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                 </motion.div>
               </AnimatePresence>
               
-              {/* Next Slides (Right) */}
-              <div className="absolute right-[15%] md:right-[18%] z-10 w-[25%] md:w-[22%] h-[80%] opacity-60 transform translate-x-2 scale-90">
-                <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
-                  <img 
+              {/* Next Slide (Right) */}
+              <div className="absolute right-0 md:right-[5%] z-10 w-[28%] md:w-[25%] h-[85%] opacity-70">
+                <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg cursor-pointer`} onClick={goToNext}>
+                  <motion.img 
                     src={events[nextIndex].photos[0].url} 
                     alt={events[nextIndex].title}
                     className="w-full h-full object-cover brightness-75"
-                  />
-                </div>
-              </div>
-              
-              <div className="absolute right-0 md:right-4 z-10 w-[20%] md:w-[18%] h-[75%] opacity-40 transform translate-x-6 scale-85">
-                <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
-                  <img 
-                    src={events[getCircularIndex(activeIndex + 2)].photos[0].url} 
-                    alt={events[getCircularIndex(activeIndex + 2)].title}
-                    className="w-full h-full object-cover brightness-75"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.3 }}
                   />
                 </div>
               </div>

@@ -3,9 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, EVENT_CATEGORIES } from "@/lib/utils";
 import { api } from "@/lib/api";
-import { EVENT_CATEGORIES } from "@shared/schema";
 
 interface SearchFilterProps {
   selectedCategory: string;
