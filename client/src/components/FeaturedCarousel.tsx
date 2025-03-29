@@ -44,25 +44,30 @@ export default function FeaturedCarousel({ events, onEventClick }: FeaturedCarou
                     opacity: offset === 0 ? 1 : 0.7,
                     scale: offset === 0 ? 1.6 : 0.8,
                     zIndex: offset === 0 ? 10 : 1,
-                    filter: offset === 0 ? 'brightness(1)' : 'brightness(0.7)'
+                    filter: offset === 0 ? 'brightness(1)' : 'brightness(0.7)',
+                    rotateY: offset * 5,
                   }}
                   transition={{ 
-                    duration: 1,
+                    duration: 0.8,
                     type: "spring",
-                    stiffness: 70,
-                    damping: 30,
+                    stiffness: 50,
+                    damping: 14,
                     mass: 1,
                     opacity: { 
-                      duration: 0.8,
-                      ease: [0.4, 0, 0.2, 1]
+                      duration: 0.6,
+                      ease: "easeInOut"
                     },
                     scale: { 
-                      duration: 0.8,
-                      ease: [0.4, 0, 0.2, 1]
+                      duration: 0.6,
+                      ease: "easeInOut"
+                    },
+                    rotateY: {
+                      duration: 0.6,
+                      ease: "easeInOut"
                     },
                     filter: {
-                      duration: 0.8,
-                      ease: [0.4, 0, 0.2, 1]
+                      duration: 0.6,
+                      ease: "easeInOut"
                     }
                   }}
                   className={`absolute w-[500px] cursor-pointer ${offset === 0 ? 'z-10' : 'z-0'}`}
