@@ -43,15 +43,27 @@ export default function FeaturedCarousel({ events, onEventClick }: FeaturedCarou
                     x: `${offset * 85}%`,
                     opacity: offset === 0 ? 1 : 0.7,
                     scale: offset === 0 ? 1.6 : 0.8,
-                    zIndex: offset === 0 ? 10 : 1
+                    zIndex: offset === 0 ? 10 : 1,
+                    filter: offset === 0 ? 'brightness(1)' : 'brightness(0.7)'
                   }}
                   transition={{ 
-                    duration: 0.8,
+                    duration: 1,
                     type: "spring",
-                    stiffness: 100,
-                    damping: 20,
-                    opacity: { duration: 0.4, ease: "easeInOut" },
-                    scale: { duration: 0.5, ease: "easeInOut" },
+                    stiffness: 70,
+                    damping: 30,
+                    mass: 1,
+                    opacity: { 
+                      duration: 0.8,
+                      ease: [0.4, 0, 0.2, 1]
+                    },
+                    scale: { 
+                      duration: 0.8,
+                      ease: [0.4, 0, 0.2, 1]
+                    },
+                    filter: {
+                      duration: 0.8,
+                      ease: [0.4, 0, 0.2, 1]
+                    }
                   }}
                   className={`absolute w-[500px] cursor-pointer ${offset === 0 ? 'z-10' : 'z-0'}`}
                   onClick={() => offset === 0 && onEventClick(event)}
