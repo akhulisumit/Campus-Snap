@@ -19,10 +19,10 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
   const cardBgColor = theme === 'light' ? 'bg-white' : 'bg-gray-800';
   
-  // Change from pink to teal/blue
-  const accentColor = 'bg-teal-600';
-  const accentHoverColor = 'hover:bg-teal-700';
-  const dotColor = theme === 'light' ? 'bg-teal-600' : 'bg-teal-500';
+  // Change to custom blue color
+  const accentColor = 'bg-[#0245b9]';
+  const accentHoverColor = 'hover:bg-[#0245b9]/90';
+  const dotColor = 'bg-[#0245b9]';
   
   // Function to get the correct index for the infinite carousel
   const getCircularIndex = (idx: number) => {
@@ -100,8 +100,18 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
           {/* Main Carousel with 3 visible slides */}
           <div className="overflow-hidden py-12">
             <div className="flex items-center justify-center relative h-[400px] md:h-[500px]">
-              {/* Previous Slide (Left) */}
-              <div className="absolute left-0 md:left-10 z-10 w-[30%] md:w-[25%] h-[85%] opacity-50 transform -translate-x-4 scale-90">
+              {/* Previous Slides (Left) */}
+              <div className="absolute left-0 md:left-4 z-10 w-[20%] md:w-[18%] h-[75%] opacity-40 transform -translate-x-6 scale-85">
+                <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
+                  <img 
+                    src={events[getCircularIndex(activeIndex - 2)].photos[0].url} 
+                    alt={events[getCircularIndex(activeIndex - 2)].title}
+                    className="w-full h-full object-cover brightness-75"
+                  />
+                </div>
+              </div>
+              
+              <div className="absolute left-[15%] md:left-[18%] z-10 w-[25%] md:w-[22%] h-[80%] opacity-60 transform -translate-x-2 scale-90">
                 <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
                   <img 
                     src={events[prevIndex].photos[0].url} 
@@ -119,7 +129,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.5 }}
-                  className="relative z-20 w-[40%] md:w-[50%] h-full"
+                  className="relative z-20 w-[40%] md:w-[60%] h-full"
                 >
                   <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-2xl`}>
                     <motion.img 
@@ -159,12 +169,22 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                 </motion.div>
               </AnimatePresence>
               
-              {/* Next Slide (Right) */}
-              <div className="absolute right-0 md:right-10 z-10 w-[30%] md:w-[25%] h-[85%] opacity-50 transform translate-x-4 scale-90">
+              {/* Next Slides (Right) */}
+              <div className="absolute right-[15%] md:right-[18%] z-10 w-[25%] md:w-[22%] h-[80%] opacity-60 transform translate-x-2 scale-90">
                 <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
                   <img 
                     src={events[nextIndex].photos[0].url} 
                     alt={events[nextIndex].title}
+                    className="w-full h-full object-cover brightness-75"
+                  />
+                </div>
+              </div>
+              
+              <div className="absolute right-0 md:right-4 z-10 w-[20%] md:w-[18%] h-[75%] opacity-40 transform translate-x-6 scale-85">
+                <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
+                  <img 
+                    src={events[getCircularIndex(activeIndex + 2)].photos[0].url} 
+                    alt={events[getCircularIndex(activeIndex + 2)].title}
                     className="w-full h-full object-cover brightness-75"
                   />
                 </div>
