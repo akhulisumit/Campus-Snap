@@ -69,7 +69,7 @@ export default function SearchFilter({
 
   return (
     <section className={cn(
-      `py-8 ${bgClass} shadow-md z-40 transition-all duration-300`,
+      `py-4 ${bgClass} shadow-md z-40 transition-all duration-300`,
       isSticky ? "sticky top-16" : ""
     )}>
       <div className="container mx-auto px-4">
