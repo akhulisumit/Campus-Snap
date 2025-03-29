@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Event } from "@shared/schema";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -17,8 +17,21 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   // Set dynamic theme-based colors
   const bgColor = theme === 'light' ? 'bg-white' : 'bg-gray-900';
   const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
-  const borderColor = theme === 'light' ? 'border-gray-200' : 'border-gray-700';
-  const accentTextColor = theme === 'light' ? 'text-accent' : 'text-accent';
+  const cardBgColor = theme === 'light' ? 'bg-white' : 'bg-gray-800';
+  
+  // Change from pink to teal/blue
+  const accentColor = 'bg-teal-600';
+  const accentHoverColor = 'hover:bg-teal-700';
+  const dotColor = theme === 'light' ? 'bg-teal-600' : 'bg-teal-500';
+  
+  // Function to get the correct index for the infinite carousel
+  const getCircularIndex = (idx: number) => {
+    return (idx + events.length) % events.length;
+  };
+
+  // Get previous and next indices
+  const prevIndex = getCircularIndex(activeIndex - 1);
+  const nextIndex = getCircularIndex(activeIndex + 1);
 
   useEffect(() => {
     if (isAutoPlaying) {
@@ -34,7 +47,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
 
   const startAutoPlay = () => {
     autoPlayIntervalRef.current = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % events.length);
+      setActiveIndex((prev) => getCircularIndex(prev + 1));
     }, 4000);
   };
 
@@ -46,12 +59,12 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   };
 
   const goToPrev = () => {
-    setActiveIndex((prev) => (prev - 1 + events.length) % events.length);
+    setActiveIndex(prevIndex);
     restartAutoPlay();
   };
 
   const goToNext = () => {
-    setActiveIndex((prev) => (prev + 1) % events.length);
+    setActiveIndex(nextIndex);
     restartAutoPlay();
   };
 
@@ -79,73 +92,101 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
         >
           <span className="relative inline-block">
             Featured Events
-            <span className="absolute -bottom-2 left-0 right-0 h-1 bg-accent"></span>
+            <span className={`absolute -bottom-2 left-0 right-0 h-1 ${accentColor}`}></span>
           </span>
         </motion.h2>
         
-        <div className="relative max-w-5xl mx-auto">
-          {/* Main Carousel */}
-          <div className="overflow-hidden rounded-lg shadow-xl">
-            {events.map((event, index) => (
-              <div 
-                key={event.id}
-                className={`relative ${index === activeIndex ? 'block' : 'hidden'} h-96 md:h-[500px] overflow-hidden rounded-lg`}
-              >
-                <div className="absolute inset-0 overflow-hidden">
-                  <motion.img 
-                    src={event.photos[0].url} 
-                    alt={event.title}
-                    className="w-full h-full object-cover"
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ 
-                      duration: 8, 
-                      ease: "easeInOut",
-                      repeat: Infinity,
-                      repeatType: "loop" 
-                    }}
+        <div className="relative max-w-6xl mx-auto">
+          {/* Main Carousel with 3 visible slides */}
+          <div className="overflow-hidden py-12">
+            <div className="flex items-center justify-center relative h-[400px] md:h-[500px]">
+              {/* Previous Slide (Left) */}
+              <div className="absolute left-0 md:left-10 z-10 w-[30%] md:w-[25%] h-[85%] opacity-50 transform -translate-x-4 scale-90">
+                <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
+                  <img 
+                    src={events[prevIndex].photos[0].url} 
+                    alt={events[prevIndex].title}
+                    className="w-full h-full object-cover brightness-75"
                   />
                 </div>
-                
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-8">
-                  <motion.div
-                    initial={{ y: 30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="max-w-2xl"
-                  >
-                    <span className={`px-3 py-1 bg-accent text-white text-xs font-semibold rounded-full inline-block mb-3`}>
-                      {event.category}
-                    </span>
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{event.title}</h3>
-                    <p className="text-gray-200 mb-4">
-                      {new Date(event.date).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
-                    </p>
-                    <p className="text-gray-300 line-clamp-2 mb-4">{event.description}</p>
-                  </motion.div>
+              </div>
+              
+              {/* Current Slide (Center) */}
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={activeIndex}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative z-20 w-[40%] md:w-[50%] h-full"
+                >
+                  <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-2xl`}>
+                    <motion.img 
+                      src={events[activeIndex].photos[0].url} 
+                      alt={events[activeIndex].title}
+                      className="w-full h-full object-cover"
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ 
+                        duration: 8, 
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                        repeatType: "loop" 
+                      }}
+                    />
+                    
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-6">
+                      <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                      >
+                        <span className={`px-3 py-1 ${accentColor} text-white text-xs font-semibold rounded-full inline-block mb-3`}>
+                          {events[activeIndex].category}
+                        </span>
+                        <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{events[activeIndex].title}</h3>
+                        <p className="text-gray-200 mb-2 text-sm md:text-base">
+                          {new Date(events[activeIndex].date).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          })}
+                        </p>
+                        <p className="text-gray-300 text-sm md:text-base line-clamp-2">{events[activeIndex].description}</p>
+                      </motion.div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+              
+              {/* Next Slide (Right) */}
+              <div className="absolute right-0 md:right-10 z-10 w-[30%] md:w-[25%] h-[85%] opacity-50 transform translate-x-4 scale-90">
+                <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
+                  <img 
+                    src={events[nextIndex].photos[0].url} 
+                    alt={events[nextIndex].title}
+                    className="w-full h-full object-cover brightness-75"
+                  />
                 </div>
               </div>
-            ))}
+            </div>
           </div>
           
           {/* Controls */}
-          <div className="absolute inset-y-0 left-4 flex items-center">
+          <div className="absolute inset-y-0 left-2 md:left-4 flex items-center">
             <button
               onClick={goToPrev}
-              className="bg-black bg-opacity-50 hover:bg-accent text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors duration-300"
+              className={`bg-black/50 ${accentHoverColor} text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300 shadow-lg transform hover:scale-105`}
               aria-label="Previous slide"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
           </div>
           
-          <div className="absolute inset-y-0 right-4 flex items-center">
+          <div className="absolute inset-y-0 right-2 md:right-4 flex items-center">
             <button
               onClick={goToNext}
-              className="bg-black bg-opacity-50 hover:bg-accent text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors duration-300"
+              className={`bg-black/50 ${accentHoverColor} text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300 shadow-lg transform hover:scale-105`}
               aria-label="Next slide"
             >
               <ChevronRight className="h-6 w-6" />
@@ -158,8 +199,8 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
               <button
                 key={event.id}
                 onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                  index === activeIndex ? 'bg-accent' : 'bg-gray-400'
+                className={`w-3 h-3 rounded-full transition-all duration-300 transform ${
+                  index === activeIndex ? `${dotColor} scale-125` : 'bg-gray-400'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
