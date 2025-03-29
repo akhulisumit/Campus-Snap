@@ -38,19 +38,18 @@ export default function FeaturedCarousel({ events, onEventClick }: FeaturedCarou
               return (
                 <motion.div
                   key={`${event.id}-${offset}`}
-                  initial={{ x: offset * 100 + '%', opacity: offset === 0 ? 1 : 0.5 }}
+                  initial={false}
                   animate={{ 
-                    x: offset * 85 + '%',
+                    x: `${offset * 85}%`,
                     opacity: offset === 0 ? 1 : 0.7,
                     scale: offset === 0 ? 1.6 : 0.8,
                     zIndex: offset === 0 ? 10 : 1
                   }}
                   transition={{ 
-                    duration: 0.8,
-                    ease: [0.43, 0.13, 0.23, 0.96],
-                    x: { type: "spring", stiffness: 300, damping: 30 },
+                    duration: 0.7,
+                    ease: "easeInOut",
+                    opacity: { duration: 0.3 },
                     scale: { duration: 0.4 },
-                    opacity: { duration: 0.3 }
                   }}
                   className={`absolute w-[500px] cursor-pointer ${offset === 0 ? 'z-10' : 'z-0'}`}
                   onClick={() => offset === 0 && onEventClick(event)}
