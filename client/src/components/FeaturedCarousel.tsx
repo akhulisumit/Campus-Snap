@@ -18,12 +18,12 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   const bgColor = theme === 'light' ? 'bg-white' : 'bg-gray-900';
   const textColor = theme === 'light' ? 'text-gray-800' : 'text-white';
   const cardBgColor = theme === 'light' ? 'bg-white' : 'bg-gray-800';
-  
+
   // Change to custom blue color
   const accentColor = 'bg-[#0245b9]';
   const accentHoverColor = 'hover:bg-[#0245b9]/90';
   const dotColor = 'bg-[#0245b9]';
-  
+
   // Function to get the correct index for the infinite carousel
   const getCircularIndex = (idx: number) => {
     return (idx + events.length) % events.length;
@@ -95,7 +95,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
             <span className={`absolute -bottom-2 left-0 right-0 h-1 ${accentColor}`}></span>
           </span>
         </motion.h2>
-        
+
         <div className="relative max-w-6xl mx-auto">
           {/* Main Carousel with 3 visible slides */}
           <div className="overflow-hidden py-12">
@@ -110,7 +110,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                   />
                 </div>
               </div>
-              
+
               <div className="absolute left-[15%] md:left-[18%] z-10 w-[25%] md:w-[22%] h-[80%] opacity-60 transform -translate-x-2 scale-90">
                 <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
                   <img 
@@ -120,7 +120,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                   />
                 </div>
               </div>
-              
+
               {/* Current Slide (Center) */}
               <AnimatePresence mode="wait">
                 <motion.div 
@@ -144,7 +144,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                         repeatType: "loop" 
                       }}
                     />
-                    
+
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-6">
                       <motion.div
                         initial={{ y: 20, opacity: 0 }}
@@ -168,7 +168,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                   </div>
                 </motion.div>
               </AnimatePresence>
-              
+
               {/* Next Slides (Right) */}
               <div className="absolute right-[15%] md:right-[18%] z-10 w-[25%] md:w-[22%] h-[80%] opacity-60 transform translate-x-2 scale-90">
                 <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
@@ -179,7 +179,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                   />
                 </div>
               </div>
-              
+
               <div className="absolute right-0 md:right-4 z-10 w-[20%] md:w-[18%] h-[75%] opacity-40 transform translate-x-6 scale-85">
                 <div className={`relative w-full h-full rounded-lg overflow-hidden shadow-lg`}>
                   <img 
@@ -191,7 +191,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
               </div>
             </div>
           </div>
-          
+
           {/* Controls */}
           <div className="absolute inset-y-0 left-2 md:left-4 flex items-center">
             <button
@@ -202,7 +202,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
               <ChevronLeft className="h-6 w-6" />
             </button>
           </div>
-          
+
           <div className="absolute inset-y-0 right-2 md:right-4 flex items-center">
             <button
               onClick={goToNext}
@@ -211,20 +211,6 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
             >
               <ChevronRight className="h-6 w-6" />
             </button>
-          </div>
-          
-          {/* Thumbnail Navigation */}
-          <div className="flex justify-center mt-4 space-x-2">
-            {events.map((event, index) => (
-              <button
-                key={event.id}
-                onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 transform ${
-                  index === activeIndex ? `${dotColor} scale-125` : 'bg-gray-400'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
           </div>
         </div>
       </div>
