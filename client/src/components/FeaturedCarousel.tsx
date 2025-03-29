@@ -40,19 +40,20 @@ export default function FeaturedCarousel({ events, onEventClick }: FeaturedCarou
                   key={`${event.id}-${offset}`}
                   initial={{ x: offset * 100 + '%', opacity: offset === 0 ? 1 : 0.5 }}
                   animate={{ 
-                    x: offset * 100 + '%',
-                    opacity: offset === 0 ? 1 : 0.5,
-                    scale: offset === 0 ? 1.2 : 0.8, // Increased scale for center
-                    zIndex: offset === 0 ? 2 : 1 //Added z-index for overlap
+                    x: offset * 80 + '%',
+                    opacity: offset === 0 ? 1 : 0.7,
+                    scale: offset === 0 ? 1.4 : 0.8,
+                    zIndex: offset === 0 ? 10 : 1
                   }}
-                  transition={{ duration: 0.5 }}
-                  className={`absolute w-[${offset === 0 ? 300 : 250}px] h-[${offset === 0 ? 400 : 350}px] cursor-pointer ${offset === 0 ? 'translate-x-[-50%]': ''} `}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  className={`absolute w-[400px] cursor-pointer ${offset === 0 ? 'z-10' : 'z-0'}`}
                   onClick={() => offset === 0 && onEventClick(event)}
                 >
-                  <div className="relative h-full rounded-lg overflow-hidden shadow-xl">
+                  <div className="relative rounded-lg overflow-hidden shadow-2xl aspect-[16/9]">
                     <img
                       src={event.photos?.[0]?.imageUrl || event.thumbnailUrl}
                       alt={event.title}
+                      className="w-full h-full object-cover"
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
