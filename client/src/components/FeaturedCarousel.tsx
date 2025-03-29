@@ -32,8 +32,9 @@ export default function FeaturedCarousel({ events, onEventClick }: FeaturedCarou
 
         <div className="relative h-[500px] overflow-hidden">
           <div className="flex justify-center items-center h-full">
-            {[-1, 0, 1].map((offset) => {
-              const event = events[getSlideIndex(offset)];
+            {[-1, 0, 1].map((offset, index) => {
+              const eventIndex = getSlideIndex(offset);
+              const event = events[eventIndex];
               return (
                 <motion.div
                   key={`${event.id}-${offset}`}
@@ -41,13 +42,14 @@ export default function FeaturedCarousel({ events, onEventClick }: FeaturedCarou
                   animate={{ 
                     x: offset * 100 + '%',
                     opacity: offset === 0 ? 1 : 0.5,
-                    scale: offset === 0 ? 1 : 0.8
+                    scale: offset === 0 ? 1.2 : 0.8, // Increased scale for center
+                    zIndex: offset === 0 ? 2 : 1 //Added z-index for overlap
                   }}
                   transition={{ duration: 0.5 }}
-                  className="absolute w-[300px] cursor-pointer"
+                  className={`absolute w-[${offset === 0 ? 300 : 250}px] h-[${offset === 0 ? 400 : 350}px] cursor-pointer ${offset === 0 ? 'translate-x-[-50%]': ''} `}
                   onClick={() => offset === 0 && onEventClick(event)}
                 >
-                  <div className="relative h-[400px] rounded-lg overflow-hidden shadow-xl">
+                  <div className="relative h-full rounded-lg overflow-hidden shadow-xl">
                     <img
                       src={event.photos?.[0]?.imageUrl || event.thumbnailUrl}
                       alt={event.title}
