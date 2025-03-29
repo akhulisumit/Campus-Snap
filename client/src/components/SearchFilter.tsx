@@ -70,7 +70,7 @@ export default function SearchFilter({
   return (
     <section className={cn(
       `py-2 ${bgClass} shadow-md z-40 transition-all duration-300`,
-      isSticky ? "sticky top-16" : ""
+      isSticky ? "sticky top-[64px] -mt-[1px]" : ""
     )}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
