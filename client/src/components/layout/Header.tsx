@@ -53,18 +53,47 @@ export default function Header() {
         </div>
         
         <nav className="hidden md:flex items-center space-x-6">
-          <Link href="/" className={`${textClass} ${hoverClass} transition-colors duration-300`}>
-            Home
+          <Link href="/">
+            <a 
+              className={`${textClass} ${hoverClass} transition-colors duration-300`}
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              Home
+            </a>
           </Link>
-          <Link href="/#featured" className={`${textClass} ${hoverClass} transition-colors duration-300`}>
+          <a 
+            href="#featured"
+            className={`${textClass} ${hoverClass} transition-colors duration-300`}
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
             Featured
-          </Link>
-          <Link href="/#events" className={`${textClass} ${hoverClass} transition-colors duration-300`}>
+          </a>
+          <a 
+            href="#events"
+            className={`${textClass} ${hoverClass} transition-colors duration-300`}
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
             Events
-          </Link>
-          <Link href="/#about" className={`${textClass} ${hoverClass} transition-colors duration-300`}>
+          </a>
+          <a 
+            href="#about"
+            className={`${textClass} ${hoverClass} transition-colors duration-300`}
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
             About
-          </Link>
+          </a>
           <ThemeToggle />
         </nav>
         
