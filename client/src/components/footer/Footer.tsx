@@ -4,13 +4,16 @@ import Button from '@mui/material/Button'; // Assuming MUI Button component
 
 
 function Footer() {
-  const navigate = useNavigate();
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <footer>
-      <Button variant="link" onClick={() => navigate('/about')}>About Us</Button>
-      <Button variant="link" onClick={() => navigate('/contact')}>Contact</Button>
-      <Button variant="link" onClick={() => navigate('/terms')}>Terms</Button>
-      <Button variant="link" onClick={() => navigate('/privacy')}>Privacy</Button>
+      <Button variant="link" onClick={() => scrollToSection('about')}>About Us</Button>
+      <Button variant="link" onClick={() => scrollToSection('gallery')}>Gallery</Button>
+      <Button variant="link" onClick={() => scrollToSection('contact')}>Contact</Button>
+      <Button variant="link" onClick={() => scrollToSection('events')}>Events</Button>
     </footer>
   );
 }

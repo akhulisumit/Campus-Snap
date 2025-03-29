@@ -20,6 +20,13 @@ export default function HeroSection({ slides }: HeroSectionProps) {
 
   const slide = slides[currentSlide];
 
+  const scrollToGallery = () => {
+    const element = document.getElementById("events");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <section className="relative h-screen w-full overflow-hidden">
       {/* Hero Slider */}
@@ -38,7 +45,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
               alt={slide.title}
               className="w-full h-full object-cover"
             />
-            
+
             {/* Overlay with content */}
             <div className="absolute bottom-0 left-0 w-full h-2/3 flex flex-col justify-end pb-20 px-8 md:px-16 bg-gradient-to-t from-black to-transparent">
               <motion.h2
@@ -49,7 +56,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
               >
                 {slide.title}
               </motion.h2>
-              
+
               <motion.p
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -58,7 +65,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
               >
                 {slide.description}
               </motion.p>
-              
+
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -66,7 +73,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
               >
                 <Button
                   className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
-                  onClick={() => window.location.href = "#events"}
+                  onClick={scrollToGallery}
                 >
                   View Gallery
                 </Button>
@@ -75,7 +82,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
           </motion.div>
         </AnimatePresence>
       </div>
-      
+
       {/* Navigation & Progress Indicators */}
       <div className="absolute bottom-10 left-0 w-full px-8 md:px-16 z-10 flex items-center justify-between">
         <div className="flex space-x-2">
@@ -92,7 +99,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
             </div>
           ))}
         </div>
-        
+
         <div className="flex space-x-4">
           <Button
             variant="outline"
@@ -105,7 +112,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          
+
           <Button
             variant="outline"
             size="icon"
