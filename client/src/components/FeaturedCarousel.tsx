@@ -72,7 +72,7 @@ export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
                     }
                   }}
                   className={`absolute w-[500px] cursor-pointer ${offset === 0 ? 'z-10' : 'z-0'}`}
-                  onClick={() => navigate(`/events/${event.id}`)}
+                  onClick={() => offset === 0 && navigate(`/events/${event.id}`)}
                 >
                   <div className="relative rounded-lg overflow-hidden shadow-2xl aspect-[16/9]">
                     <img
