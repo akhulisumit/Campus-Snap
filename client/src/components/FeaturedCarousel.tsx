@@ -40,13 +40,13 @@ export default function FeaturedCarousel({ events, onEventClick }: FeaturedCarou
                   key={`${event.id}-${offset}`}
                   initial={{ x: offset * 100 + '%', opacity: offset === 0 ? 1 : 0.5 }}
                   animate={{ 
-                    x: offset * 80 + '%',
+                    x: offset * 85 + '%',
                     opacity: offset === 0 ? 1 : 0.7,
-                    scale: offset === 0 ? 1.4 : 0.8,
+                    scale: offset === 0 ? 1.6 : 0.8,
                     zIndex: offset === 0 ? 10 : 1
                   }}
                   transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className={`absolute w-[400px] cursor-pointer ${offset === 0 ? 'z-10' : 'z-0'}`}
+                  className={`absolute w-[500px] cursor-pointer ${offset === 0 ? 'z-10' : 'z-0'}`}
                   onClick={() => offset === 0 && onEventClick(event)}
                 >
                   <div className="relative rounded-lg overflow-hidden shadow-2xl aspect-[16/9]">
