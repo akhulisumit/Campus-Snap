@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EventCategory } from "@/lib/utils";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface SearchFilterProps {
   onSearch: (query: string) => void;
@@ -16,6 +17,7 @@ export default function SearchFilter({
 }: SearchFilterProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSticky, setIsSticky] = useState(false);
+  const { theme } = useTheme();
   
   const categories: EventCategory[] = [
     "All", 
@@ -25,10 +27,24 @@ export default function SearchFilter({
     "Academic"
   ];
 
+  // Dynamic theme classes
+  const bgClass = theme === 'light' 
+    ? 'bg-gray-100' 
+    : 'bg-gray-800';
+  
+  const inputBgClass = theme === 'light'
+    ? 'bg-white text-gray-800 border-gray-300'
+    : 'bg-gray-900 text-white border-gray-700';
+  
+  const categoryBgClass = theme === 'light'
+    ? 'bg-white text-gray-800 hover:bg-gray-200'
+    : 'bg-gray-900 text-white hover:bg-gray-700';
+
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
-      if (offset > window.innerHeight - 100) {
+      // Make sticky after featured section
+      if (offset > window.innerHeight + 200) {
         setIsSticky(true);
       } else {
         setIsSticky(false);
@@ -53,7 +69,7 @@ export default function SearchFilter({
 
   return (
     <section className={cn(
-      "py-8 bg-secondary z-40 transition-all duration-300",
+      `py-8 ${bgClass} shadow-md z-40 transition-all duration-300`,
       isSticky ? "sticky top-16" : ""
     )}>
       <div className="container mx-auto px-4">
@@ -64,7 +80,7 @@ export default function SearchFilter({
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Search events..." 
-              className="w-full py-3 px-4 pl-12 bg-primary rounded-full text-light border border-gray-700 focus:border-accent focus:outline-none transition-colors duration-300"
+              className={`w-full py-3 px-4 pl-12 rounded-full ${inputBgClass} border focus:border-accent focus:outline-none transition-colors duration-300 shadow-sm`}
             />
             <Search className="absolute left-4 top-3 h-5 w-5 text-gray-400" />
           </div>
@@ -75,10 +91,10 @@ export default function SearchFilter({
                 key={category}
                 onClick={() => handleCategoryClick(category)}
                 className={cn(
-                  "px-4 py-2 rounded-full font-medium text-sm whitespace-nowrap transition-colors duration-300",
+                  "px-4 py-2 rounded-full font-medium text-sm whitespace-nowrap transition-colors duration-300 shadow-sm",
                   currentCategory === category 
-                    ? "bg-accent text-white" 
-                    : "bg-primary text-light hover:bg-gray-800"
+                    ? "bg-accent text-white hover:bg-accent-hover" 
+                    : categoryBgClass
                 )}
               >
                 {category}

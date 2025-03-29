@@ -2,17 +2,19 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import HeroSlider from "@/components/HeroSlider";
 import SearchFilter from "@/components/SearchFilter";
-import CircularCarousel from "@/components/CircularCarousel";
+import FeaturedCarousel from "../components/FeaturedCarousel"; // Using relative path
 import GalleryGrid from "@/components/GalleryGrid";
 import Lightbox from "@/components/Lightbox";
 import { EventCategory } from "@/lib/utils";
 import { Event } from "@shared/schema";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<EventCategory>("All");
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const { theme } = useTheme(); // Use theme context
 
   // Fetch all events
   const { data: events = [], isLoading } = useQuery({
@@ -52,19 +54,19 @@ export default function Home() {
   }
 
   return (
-    <div className="pt-16">
+    <div className={`pt-16 ${theme === 'light' ? 'bg-gray-50' : 'bg-gray-950'}`}>
       {/* Hero section */}
       <HeroSlider slides={heroEvents} />
       
-      {/* Search & Filter */}
+      {/* Featured Events Carousel */}
+      <FeaturedCarousel events={featuredEvents} />
+      
+      {/* Search & Filter - Moved below featured events */}
       <SearchFilter 
         onSearch={handleSearch} 
         onCategoryChange={handleCategoryChange} 
         currentCategory={selectedCategory} 
       />
-      
-      {/* Featured Events Carousel */}
-      <CircularCarousel events={featuredEvents} />
       
       {/* Gallery Grid */}
       <GalleryGrid 
