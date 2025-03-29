@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Event } from '@/types/event';
+import { useLocation } from 'wouter';
 
 interface FeaturedCarouselProps {
   events: Event[];
-  onEventClick: (event: Event) => void;
 }
 
-export default function FeaturedCarousel({ events, onEventClick }: FeaturedCarouselProps) {
+export default function FeaturedCarousel({ events }: FeaturedCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [, navigate] = useLocation();
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % events.length);
@@ -71,7 +72,7 @@ export default function FeaturedCarousel({ events, onEventClick }: FeaturedCarou
                     }
                   }}
                   className={`absolute w-[500px] cursor-pointer ${offset === 0 ? 'z-10' : 'z-0'}`}
-                  onClick={() => offset === 0 && onEventClick(event)}
+                  onClick={() => navigate(`/events/${event.id}`)}
                 >
                   <div className="relative rounded-lg overflow-hidden shadow-2xl aspect-[16/9]">
                     <img
