@@ -1,137 +1,81 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Menu, X } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { useTheme } from "@/contexts/ThemeContext";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { theme } = useTheme();
 
+  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  // Dynamic color classes based on theme
-  const bgClass = theme === 'light' 
-    ? 'bg-white bg-opacity-90' 
-    : 'bg-primary bg-opacity-90';
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   
-  const textClass = theme === 'light' 
-    ? 'text-gray-800' 
-    : 'text-white';
-  
-  const hoverClass = 'hover:text-accent';
-
   return (
-    <header 
-      className={`fixed top-0 left-0 w-full ${bgClass} backdrop-blur-md z-50 transition-all duration-300 ${
-        isScrolled ? "py-2" : "py-4"
-      } shadow-md`}
-    >
+    <header className={cn(
+      "fixed top-0 left-0 w-full z-50 transition-all duration-300",
+      "bg-primary bg-opacity-90 backdrop-blur-md",
+      isScrolled ? "py-2" : "py-4"
+    )}>
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center">
-          <h1 className={`text-2xl md:text-3xl font-bold ${textClass}`}>
-            <span className="text-accent">Cam</span>pus<span className="text-accent">Snap</span>
-          </h1>
-        </div>
-        
-        <nav className="hidden md:flex items-center space-x-6">
           <Link href="/">
-            <a 
-              className={`${textClass} ${hoverClass} transition-colors duration-300`}
-              onClick={(e) => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              Home
+            <a className="text-2xl md:text-3xl font-montserrat font-bold text-foreground">
+              <span className="text-primary">Cam</span>pus<span className="text-primary">Snap</span>
             </a>
           </Link>
-          <a 
-            href="#featured"
-            className={`${textClass} ${hoverClass} transition-colors duration-300`}
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            Featured
-          </a>
-          <a 
-            href="#events"
-            className={`${textClass} ${hoverClass} transition-colors duration-300`}
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            Events
-          </a>
-          <a 
-            href="#about"
-            className={`${textClass} ${hoverClass} transition-colors duration-300`}
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            About
-          </a>
-          <ThemeToggle />
+        </div>
+        
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link href="/">
+            <a className="text-foreground hover:text-primary transition-colors duration-300">Home</a>
+          </Link>
+          <a href="#featured" className="text-foreground hover:text-primary transition-colors duration-300">Featured</a>
+          <a href="#events" className="text-foreground hover:text-primary transition-colors duration-300">Events</a>
+          <a href="#" className="text-foreground hover:text-primary transition-colors duration-300">About</a>
         </nav>
         
-        <div className="flex items-center space-x-2 md:hidden">
-          <ThemeToggle />
-          <button 
-            className={`${textClass} focus:outline-none`}
-            onClick={toggleMobileMenu}
-            aria-label="Toggle mobile menu"
-          >
-            {isMobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
-        </div>
+        {/* Mobile Menu Button */}
+        <button 
+          className="block md:hidden text-foreground focus:outline-none" 
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+        >
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
       
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className={`md:hidden ${theme === 'light' ? 'bg-gray-100' : 'bg-secondary'} py-4 px-6 animate-fade-in`}>
-          <nav className="flex flex-col space-y-4">
-            <Link href="/" className={`${textClass} ${hoverClass} transition-colors duration-300`}>
-              Home
-            </Link>
-            <Link href="/#featured" className={`${textClass} ${hoverClass} transition-colors duration-300`}>
-              Featured
-            </Link>
-            <Link href="/#events" className={`${textClass} ${hoverClass} transition-colors duration-300`}>
-              Events
-            </Link>
-            <Link href="/#about" className={`${textClass} ${hoverClass} transition-colors duration-300`}>
-              About
-            </Link>
-          </nav>
-        </div>
-      )}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-secondary py-4 px-6"
+          >
+            <nav className="flex flex-col space-y-4">
+              <Link href="/">
+                <a className="text-foreground hover:text-primary transition-colors duration-300" onClick={toggleMenu}>Home</a>
+              </Link>
+              <a href="#featured" className="text-foreground hover:text-primary transition-colors duration-300" onClick={toggleMenu}>Featured</a>
+              <a href="#events" className="text-foreground hover:text-primary transition-colors duration-300" onClick={toggleMenu}>Events</a>
+              <a href="#" className="text-foreground hover:text-primary transition-colors duration-300" onClick={toggleMenu}>About</a>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

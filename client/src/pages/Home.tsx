@@ -1,88 +1,99 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import HeroSlider from "@/components/HeroSlider";
-import SearchFilter from "@/components/SearchFilter";
-import FeaturedCarousel from "../components/FeaturedCarousel"; // Using relative path
-import GalleryGrid from "@/components/GalleryGrid";
-import Lightbox from "@/components/Lightbox";
-import { EventCategory } from "@/lib/utils";
+import { api } from "@/lib/api";
 import { Event } from "@shared/schema";
-import { useTheme } from "@/contexts/ThemeContext";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
+import HeroSection from "@/components/home/hero-section";
+import SearchFilter from "@/components/home/search-filter";
+import FeaturedCarousel from "@/components/home/featured-carousel";
+import EventGallery from "@/components/home/event-gallery";
+import Lightbox from "@/components/home/lightbox";
+import { useLightbox } from "@/hooks/use-lightbox";
+import { EventWithPhotos } from "@/types/event";
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<EventCategory>("All");
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const { theme } = useTheme(); // Use theme context
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const { isOpen, selectedEvent, selectedPhotoIndex, openLightbox, closeLightbox, nextPhoto, prevPhoto, goToPhoto } = useLightbox();
 
-  // Fetch all events
-  const { data: events = [], isLoading } = useQuery({
-    queryKey: ["/api/events"],
+  // Fetch all events with filtering
+  const { data: events = [], isLoading: eventsLoading } = useQuery({
+    queryKey: ['/api/events', selectedCategory, searchQuery],
+    queryFn: () => api.events.getAll(selectedCategory, searchQuery)
   });
 
-  // Get featured events (first 5 for carousel)
-  const featuredEvents = events.slice(0, 5);
-  
-  // Get hero slide events (first 3)
-  const heroEvents = events.slice(0, 3);
+  // Fetch featured events
+  const { data: featuredEvents = [], isLoading: featuredLoading } = useQuery({
+    queryKey: ['/api/events/featured'],
+    queryFn: api.events.getFeatured
+  });
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
+  // Hero section slides (use featured events)
+  const heroSlides = featuredEvents.slice(0, 3).map(event => ({
+    id: event.id,
+    title: event.title,
+    description: event.description,
+    imageUrl: event.thumbnailUrl
+  }));
+
+  // Handle event click to open lightbox
+  const handleEventClick = async (event: Event) => {
+    try {
+      const eventWithPhotos = await api.events.getWithPhotos(event.id);
+      openLightbox(eventWithPhotos);
+    } catch (error) {
+      console.error("Failed to load event photos:", error);
+    }
   };
-
-  const handleCategoryChange = (category: EventCategory) => {
-    setSelectedCategory(category);
-  };
-
-  const handleEventClick = (eventId: number) => {
-    const event = events.find(e => e.id === eventId) || null;
-    setSelectedEvent(event);
-    setIsLightboxOpen(true);
-  };
-
-  const closeLightbox = () => {
-    setIsLightboxOpen(false);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-accent"></div>
-      </div>
-    );
-  }
 
   return (
-    <div className={`pt-16 ${theme === 'light' ? 'bg-gray-50' : 'bg-gray-950'}`}>
-      {/* Hero section */}
-      <HeroSlider slides={heroEvents} />
+    <div className="bg-background min-h-screen">
+      <Header />
       
-      {/* Featured Events Carousel */}
-      <FeaturedCarousel events={featuredEvents} />
+      <main>
+        {/* Hero Section */}
+        {!featuredLoading && heroSlides.length > 0 && (
+          <HeroSection slides={heroSlides} />
+        )}
+        
+        {/* Search & Filter */}
+        <SearchFilter 
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
+        
+        {/* Featured Events Carousel */}
+        {!featuredLoading && featuredEvents.length > 0 && (
+          <FeaturedCarousel 
+            events={featuredEvents} 
+            onEventClick={handleEventClick}
+          />
+        )}
+        
+        {/* Event Gallery Grid */}
+        <EventGallery 
+          events={events} 
+          loading={eventsLoading} 
+          onEventClick={handleEventClick}
+        />
+      </main>
       
-      {/* Search & Filter - Moved below featured events */}
-      <SearchFilter 
-        onSearch={handleSearch} 
-        onCategoryChange={handleCategoryChange} 
-        currentCategory={selectedCategory} 
-      />
+      {/* Lightbox for viewing photos */}
+      {isOpen && selectedEvent && (
+        <Lightbox
+          event={selectedEvent as EventWithPhotos}
+          currentIndex={selectedPhotoIndex}
+          onClose={closeLightbox}
+          onNext={nextPhoto}
+          onPrev={prevPhoto}
+          onSelectPhoto={goToPhoto}
+        />
+      )}
       
-      {/* Gallery Grid */}
-      <GalleryGrid 
-        events={events} 
-        onEventClick={handleEventClick} 
-        filteredCategory={selectedCategory}
-        searchQuery={searchQuery}
-      />
-      
-      {/* Lightbox */}
-      <Lightbox 
-        isOpen={isLightboxOpen} 
-        onClose={closeLightbox} 
-        event={selectedEvent} 
-        events={events} 
-      />
+      <Footer />
     </div>
   );
 }
